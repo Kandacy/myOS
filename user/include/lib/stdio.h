@@ -6,8 +6,7 @@
 #include "type.h"
 
 
-int printk(const char *fmt, ...);
-u32 printk_port(const char *fmt, ...);
+int printf(const char *fmt, ...);
 
 
 #endif /* __STDIO_H */

@@ -10,6 +10,9 @@
 #include "sbi/sbi.h"
 #include "lib/stdio.h"
 #include "lib/error.h"
+#include "lib/string.h"
+#include "trap/trap.h"
+#include "loader.h"
 
 
 // extern void boot_stack(void);
@@ -22,13 +25,16 @@
 /**
  *  @brief: kernel总入口
  */
-void main( void ) {
-    
-    // for(u8 i = 'a'; i < 'z'; i ++){
-    //     sbi_console_putchar(i);
-    // }
+int main( void ) {
 
-    printk("%d/%s/%c\n", 1, "hello", 'a');
+    const char *s = "hello world";
+    printk("%s/%d\n", s, strlen(s));
+
+    trap_init();
+    load_app();
+    run_app();
 
     panic("panic");
+
+    return 0;
 }

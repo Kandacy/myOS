@@ -10,7 +10,7 @@
  *      s: panic的原因
  *  @return: 
  */
-void panic(char *s) {
+void panic(const char *s) {
     printk("[Panic] %s\n", s);
     sbi_shutdown(1);
 }

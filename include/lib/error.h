@@ -15,7 +15,7 @@
 
 
 
-void panic(char *s);
+void panic(const char *s);
 
 
 #endif /* __ERROR_H */
