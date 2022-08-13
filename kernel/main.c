@@ -10,6 +10,7 @@
 #include "sbi/sbi.h"
 #include "lib/stdio.h"
 #include "lib/error.h"
+#include "lib/string.h"
 
 
 // extern void boot_stack(void);
@@ -29,6 +30,9 @@ void main( void ) {
     // }
 
     printk("%d/%s/%c\n", 1, "hello", 'a');
+
+    char *s = "hello world";
+    printk("%s/%d\n", s, strlen(s));
 
     panic("panic");
 }
