@@ -4,6 +4,7 @@
 #include "lib/stdio.h"
 #include "lib/error.h"
 #include "syscall/syscall.h"
+#include "loader.h"
 
 #if 0
 impl Interrupt {
@@ -94,6 +95,10 @@ TrapContext *trap_handler(TrapContext *cx) {
             case UserEnvCall:
                 cx->sepc += 4;
                 cx->x_regs[10] = syscall(cx->x_regs[17], cx->x_regs[10], cx->x_regs[11], cx->x_regs[12]);
+                break;
+            case StoreFault:
+                printk("[kernel] app err: store fault. run next\n");
+                run_app();
                 break;
             default:
                 panic("trap scause undefined.");

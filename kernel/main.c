@@ -27,8 +27,8 @@
  */
 int main( void ) {
 
-    const char *s = "hello world";
-    printk("%s/%d\n", s, strlen(s));
+    // const char *s = "hello world";
+    // printk("%s/%d\n", s, strlen(s));
 
     trap_init();
     load_app();

@@ -3,7 +3,7 @@
 #define __SYSCALL_H
 
 #include "type.h"
-
+#include "loader.h"
 
 /* fs.c */
 extern u64 sys_write(u64 fd, char *buf, u64 len);
