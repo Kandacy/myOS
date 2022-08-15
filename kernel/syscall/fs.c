@@ -3,8 +3,7 @@
 #include "lib/error.h"
 #include "lib/stdio.h"
 #include "syscall_id.h"
-#include "loader.h"
-// #include "syscall/syscall_id.h"
+#include "task/task.h"
 
 
 
@@ -40,5 +39,5 @@ u64 sys_write(u64 fd, char *buf, u64 len) {
  */
 void sys_exit(u64 exit_id) {
     printk("[kernel] app exit %d.\n", exit_id);
-    run_app();
+    exit_current_app();
 }

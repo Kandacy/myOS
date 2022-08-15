@@ -4,7 +4,7 @@
 #include "lib/stdio.h"
 #include "lib/error.h"
 #include "syscall/syscall.h"
-#include "loader.h"
+#include "task/task.h"
 
 #if 0
 impl Interrupt {
@@ -20,30 +20,6 @@ impl Interrupt {
             9 => Interrupt::SupervisorExternal,
             10 => Interrupt::VirtualSupervisorExternal,
             _ => Interrupt::Unknown,
-        }
-    }
-}
-
-impl Exception {
-    pub fn from(nr: usize) -> Self {
-        match nr {
-            0 => Exception::InstructionMisaligned,
-            1 => Exception::InstructionFault,
-            2 => Exception::IllegalInstruction,
-            3 => Exception::Breakpoint,
-            5 => Exception::LoadFault,
-            6 => Exception::StoreMisaligned,
-            7 => Exception::StoreFault,
-            8 => Exception::UserEnvCall,
-            10 => Exception::VirtualSupervisorEnvCall,
-            12 => Exception::InstructionPageFault,
-            13 => Exception::LoadPageFault,
-            15 => Exception::StorePageFault,
-            20 => Exception::InstructionGuestPageFault,
-            21 => Exception::LoadGuestPageFault,
-            22 => Exception::VirtualInstruction,
-            23 => Exception::StoreGuestPageFault,
-            _ => Exception::Unknown,
         }
     }
 }
@@ -64,6 +40,10 @@ impl Exception {
 #define InstructionPageFault        12
 #define LoadPageFault               13
 #define StorePageFault              15
+#define InstructionGuestPageFault   20
+#define LoadGuestPageFault          21
+#define VirtualInstruction          22
+#define StoreGuestPageFault         23
 
 
 
@@ -98,7 +78,7 @@ TrapContext *trap_handler(TrapContext *cx) {
                 break;
             case StoreFault:
                 printk("[kernel] app err: store fault. run next\n");
-                run_app();
+                exit_current_app();
                 break;
             default:
                 panic("trap scause undefined.");

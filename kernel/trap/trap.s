@@ -38,7 +38,7 @@ __alltraps:
     call trap_handler
 
 __restore:
-    mv sp, a0
+    # mv sp, a0 // 在此之前sp就已经指向正确的stack
     # now sp->kernel stack(after allocated), sscratch->user stack
     # restore sstatus/sepc
     ld t0, 32*8(sp)

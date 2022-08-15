@@ -7,12 +7,12 @@
 
 // #include "start.s"
 #include "type.h"
-#include "sbi/sbi.h"
 #include "lib/stdio.h"
 #include "lib/error.h"
 #include "lib/string.h"
 #include "trap/trap.h"
 #include "loader.h"
+#include "task/task.h"
 
 
 // extern void boot_stack(void);
@@ -25,16 +25,15 @@
 /**
  *  @brief: kernel总入口
  */
-int main( void ) {
+void main( void ) {
 
-    // const char *s = "hello world";
-    // printk("%s/%d\n", s, strlen(s));
+    load_app(); // 加载app到指定内存地址
+    trap_init(); // 重定向trap入口地址
+    task_manager_init(); // 初始化TaskManager
 
-    trap_init();
-    load_app();
-    run_app();
+    printk("[kernel] init ok\n");
+
+    run_first_app();
 
     panic("panic");
-
-    return 0;
 }

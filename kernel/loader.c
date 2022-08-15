@@ -8,32 +8,12 @@
 #include "trap/trap.h"
 #include "driver/riscv.h"
 #include "lib/error.h"
+#include "mm/mem.h"
+#include "config.h"
 
-
-#define APP_BASE_ADDRESS  0x80400000
-#define KERNEL_STACK_SIZE 4096
-#define USER_STACK_SIZE   4096
-#define APP_MAX_SIZE      0x20000
 
 
 extern void _num_app(void);
-
-
-static u64 current_app = 0;
-
-static u8 kernel_stack[KERNEL_STACK_SIZE] = {0};
-static u8 user_stack[USER_STACK_SIZE] = {0};
-
-
-
-u64 get_kernel_stack_top( void ) {
-    return (u64)(kernel_stack) + KERNEL_STACK_SIZE;
-}
-
-
-u64 get_user_stack_top( void ) {
-    return (u64)(user_stack) + KERNEL_STACK_SIZE;
-}
 
 
 
@@ -64,34 +44,3 @@ void load_app( void ) {
 
 
 
-
-/**
- *  @brief: 调用__restore，启动程序
- *  @param:
- *  @return: 
- */
-void run_app( void ) {
-
-    if(current_app >= *(u64 *)_num_app){
-        panic("all app execed");
-    }
-
-    /* 设置tc，准备传给app */
-    const u64 sstatus = r_sstatus();
-    static TrapContext tc = {
-        {0},
-        0,
-        0
-    };
-    tc.sepc = APP_BASE_ADDRESS + (APP_MAX_SIZE * current_app);
-    current_app ++;
-    tc.sstatus = sstatus & (~SSTATUS_SPP);
-    tc.x_regs[2] = get_user_stack_top(); // 保证sscratch指向user_stack
-
-    // 将tc压入kernel_stack
-    u64 store_posi = get_kernel_stack_top() - sizeof(TrapContext);
-    *(TrapContext *)store_posi = tc;
-    
-    extern void __restore(TrapContext *cx);
-    __restore(&tc);
-}
