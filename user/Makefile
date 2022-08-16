@@ -6,7 +6,7 @@ OBJCOPY = rust-objcopy
 OBJDUMP = rust-objdump
 
 INC_DIR = ./include
-APP_NAME = 01t
+APP_NAME = 00t
 SRC_LINKER = ./linker/${APP_NAME}_linker.ld
 TARGET_NAME = ./target/${APP_NAME}
 

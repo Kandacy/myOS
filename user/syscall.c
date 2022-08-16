@@ -30,3 +30,8 @@ i64 sys_write(u64 fd, char *buf) {
 void sys_exit(i32 id) {
     syscall(SYSCALL_EXIT, id, 0, 0);
 }
+
+
+void sys_yield( void ) {
+    syscall(SYSCALL_YIELD, 0, 0, 0);
+}

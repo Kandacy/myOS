@@ -4,8 +4,7 @@
 
 
 #include "type.h"
+#include "syscall.h"
 
-
-// extern i64 main( void );
 
 #endif /* __USER_LIB_H */

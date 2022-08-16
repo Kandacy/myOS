@@ -22,7 +22,7 @@ SRC_FILES = ./start.s \
 			./link_app.s \
 			./loader.c \
 			./syscall/syscall.c \
-			./syscall/fs.c \
+			./syscall/process.c \
 			./task/switch.s \
 			./task/task.c \
 			./mm/mem.c 

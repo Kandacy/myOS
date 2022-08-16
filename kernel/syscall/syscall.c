@@ -22,6 +22,9 @@ u64 syscall(u64 id, u64 arg0, u64 arg1, u64 arg2) {
         case SYSCALL_EXIT:
             sys_exit(arg0);
             break;
+        case SYSCALL_YIELD:
+            sys_yield();
+            break;
         default:
             panic("kernel: syscall id undefined.");
             break;
