@@ -66,3 +66,14 @@ void sbi_shutdown(u8 exit_code) {
 }
 
 
+/**
+ *  @brief: 调用sbi接口，设置mtimecmp的值（mtimer计数到此触发中断）
+ *  @param:
+ *      time: 要设置的值
+ *  @return: 
+ */
+void sbi_set_timer(u64 time) {
+    sbi_call(SBI_SET_TIMER, time, 0, 0);
+}
+
+

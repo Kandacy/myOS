@@ -5,29 +5,22 @@
 #include "lib/error.h"
 #include "syscall/syscall.h"
 #include "task/task.h"
-
-#if 0
-impl Interrupt {
-    pub fn from(nr: usize) -> Self {
-        match nr {
-            0 => Interrupt::UserSoft,
-            1 => Interrupt::SupervisorSoft,
-            2 => Interrupt::VirtualSupervisorSoft,
-            4 => Interrupt::UserTimer,
-            5 => Interrupt::SupervisorTimer,
-            6 => Interrupt::VirtualSupervisorTimer,
-            8 => Interrupt::UserExternal,
-            9 => Interrupt::SupervisorExternal,
-            10 => Interrupt::VirtualSupervisorExternal,
-            _ => Interrupt::Unknown,
-        }
-    }
-}
-#endif
+#include "timer.h"
 
 
 
+/* interrupt */
+#define UserSoft                   0  
+#define SupervisorSoft             1  
+#define VirtualSupervisorSoft      2  
+#define UserTimer                  4  
+#define SupervisorTimer            5  
+#define VirtualSupervisorTimer     6  
+#define UserExternal               8  
+#define SupervisorExternal         9  
+#define VirtualSupervisorExternal  10 
 
+/* exception */
 #define InstructionMisaligned       0
 #define InstructionFault            1
 #define IllegalInstruction          2
@@ -67,11 +60,19 @@ TrapContext *trap_handler(TrapContext *cx) {
     // printk("[Trap] scause = 0x%x\n", scause);
     
     // 根据原因处理trap
-    u64 trap = scause & 0x0fff;
-    if (scause & 0x8000 == 1) { // interrupt
-        panic("can't identify interrupt trap");
-    } else { // Exception
+    if (scause & 0x8000 != 0) { // interrupt
+        u64 trap = scause & 0x0fff;
         switch (trap) {
+            case SupervisorTimer:
+                set_next_trigger();
+                suspend_current_app();
+                break;
+            default:
+                panic("trap interrupt case undefined");
+                break;
+        }
+    } else { // Exception
+        switch (scause) {
             case UserEnvCall:
                 cx->sepc += 4;
                 cx->x_regs[10] = syscall(cx->x_regs[17], cx->x_regs[10], cx->x_regs[11], cx->x_regs[12]);
@@ -81,7 +82,7 @@ TrapContext *trap_handler(TrapContext *cx) {
                 exit_current_app();
                 break;
             default:
-                panic("trap scause undefined.");
+                panic("trap exception case undefined.");
                 break;
         }
     }
@@ -98,7 +99,7 @@ TrapContext *trap_handler(TrapContext *cx) {
  *  @return:
  */
 void trap_init( void ){
-    printk("[Test] trap.__alltraps = 0x%x\n", (u64)__alltraps);
+    // printk("[Test] trap.__alltraps = 0x%x\n", (u64)__alltraps);
     // 重定向trap函数
     w_stvec( (u64)__alltraps | 0);
 }

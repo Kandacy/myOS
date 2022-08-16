@@ -13,6 +13,7 @@
 #include "trap/trap.h"
 #include "loader.h"
 #include "task/task.h"
+#include "timer.h"
 
 
 // extern void boot_stack(void);
@@ -30,6 +31,8 @@ void main( void ) {
     load_app(); // 加载app到指定内存地址
     trap_init(); // 重定向trap入口地址
     task_manager_init(); // 初始化TaskManager
+    timer_init(); // 初始化timer
+    set_next_trigger(); // 设置时间片
 
     printk("[kernel] init ok\n");
 

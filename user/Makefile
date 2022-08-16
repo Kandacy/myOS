@@ -6,16 +6,16 @@ OBJCOPY = rust-objcopy
 OBJDUMP = rust-objdump
 
 INC_DIR = ./include
-APP_NAME = 00t
-SRC_LINKER = ./linker/${APP_NAME}_linker.ld
-TARGET_NAME = ./target/${APP_NAME}
+APP_NUM = 02
+SRC_LINKER = ./linker/${APP_NUM}t_linker.ld
+TARGET_NAME = ./target/${APP_NUM}t
 
 SRC_FILES = ./start.s \
 			./main.c \
 			./syscall.c \
 			./lib/printf.c \
 			./lib/string.c \
-			./app/${APP_NAME}.c
+			./app/${APP_NUM}t.c
 
 build: 
 	${CC} ${SRC_FILES} -o ${TARGET_NAME} \

@@ -25,7 +25,8 @@ SRC_FILES = ./start.s \
 			./syscall/process.c \
 			./task/switch.s \
 			./task/task.c \
-			./mm/mem.c 
+			./mm/mem.c \
+			./timer.c 
 
 build: 
 	${CC} ${SRC_FILES} -o ${TARGET_NAME} \
