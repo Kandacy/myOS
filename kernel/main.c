@@ -20,10 +20,6 @@
 #include "type.h"
 
 
-// extern void boot_stack(void);
-// extern void boot_stack_top(void);
-// extern u8 *boot_stack;
-// extern u8 *boot_stack_top;
 
 
 // 测试malloc和free
@@ -90,7 +86,9 @@ void test_realloc( void ){
 
 
 
+#if VECTOR_GENERICITY
 
+#else
 // 测试vector
 void test_vector( void ){
     vector vec = vector_init(10);
@@ -113,7 +111,7 @@ void test_vector( void ){
         printk("[Test] vec[%d] = 0x%x\n", i, vec.data[i]);
     }
 }
-
+#endif
 
 
 
@@ -152,6 +150,15 @@ void test_frame_allocator( void ){
 
 
 
+// 测试内核程序是否可以在mmu开启后正常运行
+void mm_mmu_test( void ){
+    mm_init();
+    printk("Hello world after open mmu!\n");
+}
+
+
+
+
 
 /**
  *  @brief: kernel总入口
@@ -166,14 +173,15 @@ void main( void ) {
     printk("[kernel] init ok\n");
 
     /* 开始执行程序 */
-    set_next_trigger(); // 设置时间片
-    run_first_app();
+    // set_next_trigger(); // 设置时间片
+    // run_first_app();
 
 
     /* -----------测试程序----------- */
     // test_realloc();
     // test_vector();
     // test_frame_allocator();
+    mm_mmu_test();
     /* ----------------------------- */
 
 

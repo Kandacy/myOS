@@ -1,15 +1,17 @@
 
-#include "lib/stdlib.h"
 #include "type.h"
+#include "lib/stdlib.h"
 #include "lib/stdio.h"
+#include "config.h"
 
 
-#define KERNEL_HEAP_SIZE 0x2000
 
 #define BLOCK_FREE      0
 #define BLOCK_NOT_FREE  1
 
 
+
+// 用于malloc的堆内存
 static u8 kernel_heap[KERNEL_HEAP_SIZE] = {0};
 
 

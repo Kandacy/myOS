@@ -1,15 +1,18 @@
 
 CROSS_PREFIX = riscv64-unknown-elf-
 CC = ${CROSS_PREFIX}gcc
+LD = ${CROSS_PREFIX}ld
 
-OBJCOPY = rust-objcopy
-OBJDUMP = rust-objdump
+OBJCOPY = riscv64-unknown-elf-objcopy
+OBJDUMP = riscv64-unknown-elf-objdump
 
 BASE_ADDRESS = 0x80200000
 
 INC_DIR = ../include
 SRC_LINKER = ./qemu.ld
 TARGET_NAME = ../target/main
+TARGET_ELF = ${TARGET_NAME}.elf
+TARGET_BIN = ${TARGET_NAME}.bin
 
 SRC_FILES = ./start.s \
 			./lib/alloc.c \
@@ -34,22 +37,37 @@ SRC_FILES = ./start.s \
 			./timer.c 
 
 build: 
-	${CC} ${SRC_FILES} -o ${TARGET_NAME} \
+	@${CC} ${SRC_FILES} -o ${TARGET_ELF} \
 		-T${SRC_LINKER} \
 		-I${INC_DIR} \
 		-nostdinc -nostdlib -mcmodel=medany -fno-builtin
 
 dump:
-	${OBJDUMP} -h ${TARGET_NAME}
+	@${OBJDUMP} -h ${TARGET_ELF}
 
-run: build
-	${OBJCOPY} --strip-all ${TARGET_NAME} -O binary ${TARGET_NAME}.bin
-	qemu-system-riscv64 \
+objcopy: build
+	@${OBJCOPY} -S ${TARGET_ELF} -O binary ${TARGET_BIN}
+
+# run with gdb
+rung: objcopy
+	@qemu-system-riscv64 \
 		-machine virt \
 		-nographic \
 		-bios ../bootloader/rustsbi-qemu.bin \
-		-device loader,file=${TARGET_NAME}.bin,addr=${BASE_ADDRESS} #-s -S
+		-device loader,file=${TARGET_NAME}.bin,addr=${BASE_ADDRESS} -s -S
 
+run: objcopy
+	@qemu-system-riscv64 \
+		-machine virt \
+		-nographic \
+		-bios ../bootloader/rustsbi-qemu.bin \
+		-device loader,file=${TARGET_NAME}.bin,addr=${BASE_ADDRESS}
+#-append nokaslr	-kernel ${TARGET_NAME}.bin
+#-smp 1
+
+
+gdb: objcopy
+	riscv-nuclei-elf-gdb -ex "set arch riscv:rv64" -ex "file ${TARGET_ELF}" -ex "target remote localhost:1234"
 
 
 # // 执行命令

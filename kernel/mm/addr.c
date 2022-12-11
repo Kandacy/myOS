@@ -5,22 +5,22 @@
 
 
 
-PhysPageNum phys_addr_to_page_num(PhysAddr addr, u8 flag) {
+PhysPageNum pa_to_ppn(PhysAddr addr, u8 flag) {
     return (flag == ADDR_FLOOR) ? (addr >> PAGE_SIZE_BITS) : ((addr >> PAGE_SIZE_BITS) + 1);
 }
 
 
-PhysAddr phys_page_num_to_addr(PhysPageNum ppn) {
+PhysAddr ppn_to_pa(PhysPageNum ppn) {
     return ppn << PAGE_SIZE_BITS;
 }
 
 
-VirtPageNum virt_addr_to_page_num(VirtAddr addr, u8 flag) {
+VirtPageNum va_to_vpn(VirtAddr addr, u8 flag) {
     return (flag == ADDR_FLOOR) ? (addr >> PAGE_SIZE_BITS) : ((addr >> PAGE_SIZE_BITS) + 1);
 }
 
 
-VirtAddr virt_page_num_to_addr(VirtPageNum vpn) {
+VirtAddr vpn_to_va(VirtPageNum vpn) {
     return vpn << PAGE_SIZE_BITS;
 }
 
@@ -35,7 +35,7 @@ VirtAddr virt_page_num_to_addr(VirtPageNum vpn) {
  *  @return: 
  */
 void vpn_to_indexes(VirtPageNum vpn, u64 *indexes){
-    for(u8 i = 2; i >= 0; i --){
+    for(i8 i = 2; i >= 0; i --){
         indexes[i] = vpn & 0x1ff;
         vpn >>= 9;
     }
@@ -51,7 +51,7 @@ void vpn_to_indexes(VirtPageNum vpn, u64 *indexes){
  *  @return: pte数组起始地址
  */
 PageTableEntry *get_pte_array_from_ppn(PhysPageNum ppn){
-    return (PageTableEntry *)phys_page_num_to_addr(ppn);
+    return (PageTableEntry *)ppn_to_pa(ppn);
 }
 
 
@@ -64,7 +64,7 @@ PageTableEntry *get_pte_array_from_ppn(PhysPageNum ppn){
  *  @return: pte数组起始地址
  */
 u8 *get_u8_array_from_ppn(PhysPageNum ppn){
-    return (u8 *)phys_page_num_to_addr(ppn);
+    return (u8 *)ppn_to_pa(ppn);
 }
 
 

@@ -29,5 +29,5 @@ app_1_end:
     .global app_2_start
     .global app_2_end
 app_2_start:
-    .incbin "../user/target/02t.bin"
+    .incbin "../user/target/02t.elf"
 app_2_end:

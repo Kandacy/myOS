@@ -5,6 +5,9 @@
 #include "type.h"
 #include "config.h"
 
+#include "lib/vector.h"
+#include "lib/stdio.h"
+
 
 
 //----------------------------------------------------------------
@@ -36,7 +39,7 @@ u64 get_user_stack_top( u64 app_id );
 
 
 /* PTE标志位 */
-#define PTE_FLAG_BIT_V  (1 << 0)  // 页表项有效？
+#define PTE_FLAG_BIT_V  (1)  // 页表项有效？
 #define PTE_FLAG_BIT_R  (1 << 1)  // 可读？
 #define PTE_FLAG_BIT_W  (1 << 2)  // 可写？
 #define PTE_FLAG_BIT_X  (1 << 3)  // 可执行？
@@ -46,35 +49,42 @@ u64 get_user_stack_top( u64 app_id );
 #define PTE_FLAG_BIT_D  (1 << 7)  // 曾被写过？
 
 
-// 物理内存中止地址
-#define MEMORY_END  0x80800000
-
-
-
 
 typedef u64 PhysAddr;
 typedef u64 VirtAddr;
 typedef u64 PhysPageNum;
 typedef u64 VirtPageNum;
 
+/* 页表管理项，用于保存根页表和已使用的页表 */
+typedef struct PageTable{
+    PhysPageNum root_ppn; // 根页表页号
+    Vector ppns; // 保存使用的页表，便于清理
+}PageTable;
+
 typedef u64 PageTableEntry;
 
 
 
 
+i64 vPPN_cmp(const void* elemAddr1,const void* elemAddr2);
+
+
+
+
+/* mm/mem.c */
+void mm_init( void );
+void mm_map_for_mmu(PageTable *pt, PhysAddr pa_start, PhysAddr pa_end, u64 ext_pte_flags, u64 map_type);
+
+
+
 /* mm/addr.c */
-PhysPageNum phys_addr_to_page_num(PhysAddr addr, u8 flag);
-PhysAddr phys_page_num_to_addr(PhysPageNum ppn);
-VirtPageNum virt_addr_to_page_num(VirtAddr addr, u8 flag);
-VirtAddr virt_page_num_to_addr(VirtPageNum vpn);
+PhysPageNum pa_to_ppn(PhysAddr addr, u8 flag);
+PhysAddr ppn_to_pa(PhysPageNum ppn);
+VirtPageNum va_to_vpn(VirtAddr addr, u8 flag);
+VirtAddr vpn_to_va(VirtPageNum vpn);
 void vpn_to_indexes(VirtPageNum vpn, u64 *indexes);
 PageTableEntry *get_pte_array_from_ppn(PhysPageNum ppn);
 u8 *get_u8_array_from_ppn(PhysPageNum ppn);
-
-
-
-/* mm/page_table.c */
-PageTableEntry pte_new(PhysPageNum ppn, u64 flags);
 
 
 
@@ -82,6 +92,16 @@ PageTableEntry pte_new(PhysPageNum ppn, u64 flags);
 void frame_allocator_init( void );
 PhysPageNum frame_allocator_alloc( void );
 void frame_allocator_dealloc(PhysPageNum ppn);
+
+
+
+/* mm/page_table.c */
+PageTable page_table_new( void );
+PageTableEntry pte_new(PhysPageNum ppn, u64 flags);
+PhysPageNum pte_get_ppn(PageTableEntry pte);
+void pt_map_ppn_vpn(PageTable *pt, PhysPageNum ppn, VirtPageNum vpn, u64 ext_pte_flag);
+void pt_unmap_ppn_vpn(PageTable *pt, VirtPageNum vpn);
+
 
 
 #endif /* __MEM_H */

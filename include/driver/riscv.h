@@ -197,6 +197,7 @@ static inline void
 w_satp(u64 x)
 {
   asm volatile("csrw satp, %0" : : "r" (x));
+  asm volatile("sfence.vma");
 }
 
 static inline u64

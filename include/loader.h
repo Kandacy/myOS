@@ -4,7 +4,6 @@
 
 #include "type.h"
 
-
 void load_app( void );
 void run_app( void );
 
