@@ -1,7 +1,6 @@
 
 #include "syscall/syscall.h"
 #include "syscall_id.h"
-#include "sbi/sbi.h"
 #include "lib/error.h"
 
 

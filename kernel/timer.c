@@ -4,6 +4,7 @@
 #include "sbi/sbi.h"
 #include "driver/riscv.h"
 #include "config.h"
+#include "lib/stdio.h"
 
 
 
@@ -26,4 +27,5 @@ void set_next_trigger( void ) {
  */
 void timer_init( void ) {
     w_sie(SIE_STIE);
+    // printk("[Test] timer: mie = 0x%x\n", r_mie());
 }

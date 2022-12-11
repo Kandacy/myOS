@@ -12,20 +12,25 @@ SRC_LINKER = ./qemu.ld
 TARGET_NAME = ../target/main
 
 SRC_FILES = ./start.s \
-			./main.c \
-			./sbi/sbi.c \
+			./lib/alloc.c \
 			./lib/printk.c \
 			./lib/error.c \
 			./lib/string.c \
-			./trap/trap.s \
-			./trap/trap.c \
-			./link_app.s \
-			./loader.c \
+			./lib/vector.c \
+			./mm/addr.c \
+			./mm/frame_allocator.c \
+			./mm/mem.c \
+			./mm/page_table.c \
+			./sbi/sbi.c \
 			./syscall/syscall.c \
 			./syscall/process.c \
 			./task/switch.s \
 			./task/task.c \
-			./mm/mem.c \
+			./trap/trap.s \
+			./trap/trap.c \
+			./link_app.s \
+			./loader.c \
+			./main.c \
 			./timer.c 
 
 build: 

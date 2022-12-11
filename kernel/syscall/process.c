@@ -4,6 +4,7 @@
 #include "lib/stdio.h"
 #include "syscall_id.h"
 #include "task/task.h"
+#include "timer.h"
 
 
 
@@ -39,7 +40,9 @@ u64 sys_write(u64 fd, char *buf, u64 len) {
  */
 void sys_exit(u64 exit_id) {
     printk("[kernel] app exit %d.\n", exit_id);
+    set_next_trigger();
     exit_current_app();
+    set_next_trigger();
 }
 
 

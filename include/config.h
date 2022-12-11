@@ -10,9 +10,9 @@
 
 
 
-#define CLOCK_FREQ      12500000
+#define CLOCK_FREQ      24000000
 
-#define TICKS_PER_SEC   100
+#define TICKS_PER_SEC   50
 
 
 #endif /* __CONFIG_H */

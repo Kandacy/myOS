@@ -1,5 +1,5 @@
 OUTPUT_ARCH(riscv)
-ENTRY(_entry)
+ENTRY(_start)
 
 BASE_ADDRESS = 0x80200000;
 
@@ -62,4 +62,6 @@ SECTIONS
     
     . = ALIGN(4K);
     PROVIDE(end = .);
+
+    ekernel = .;
 }

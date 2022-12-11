@@ -56,18 +56,17 @@ TrapContext *trap_handler(TrapContext *cx) {
     // printk("[kernel] trap handler\n");
     u64 scause = r_scause();
     u64 stval = r_stval();
-
-    // printk("[Trap] scause = 0x%x\n", scause);
     
     // 根据原因处理trap
     if (scause & 0x8000 != 0) { // interrupt
         u64 trap = scause & 0x0fff;
         switch (trap) {
             case SupervisorTimer:
-                set_next_trigger();
                 suspend_current_app();
+                set_next_trigger();
                 break;
             default:
+                printk("[Error] trap: interrupt %d undefined.\n", trap);
                 panic("trap interrupt case undefined");
                 break;
         }
@@ -82,6 +81,7 @@ TrapContext *trap_handler(TrapContext *cx) {
                 exit_current_app();
                 break;
             default:
+                printk("[Error] trap: exception %d undefined.\n", scause);
                 panic("trap exception case undefined.");
                 break;
         }
