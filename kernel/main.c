@@ -150,14 +150,6 @@ void test_frame_allocator( void ){
 
 
 
-// 测试内核程序是否可以在mmu开启后正常运行
-void mm_mmu_test( void ){
-    mm_init();
-    printk("Hello world after open mmu!\n");
-}
-
-
-
 
 
 /**
@@ -165,23 +157,23 @@ void mm_mmu_test( void ){
  */
 void main( void ) {
 
-    load_app(); // 加载app到指定内存地址
     trap_init(); // 重定向trap入口地址
-    task_manager_init(); // 初始化TaskManager
     kernel_heap_init(); // 初始化kernel heap（malloc分配部分）
+    mm_init(); // 初始化MMU
+    load_app(); // 加载app到指定内存地址
+    task_manager_init(); // 初始化TaskManager
     timer_init(); // 初始化timer，开sie
     printk("[kernel] init ok\n");
 
     /* 开始执行程序 */
-    // set_next_trigger(); // 设置时间片
-    // run_first_app();
+    set_next_trigger(); // 设置时间片
+    run_first_app();
 
 
     /* -----------测试程序----------- */
     // test_realloc();
     // test_vector();
     // test_frame_allocator();
-    mm_mmu_test();
     /* ----------------------------- */
 
 

@@ -2,6 +2,7 @@
 #include "syscall/syscall.h"
 #include "syscall_id.h"
 #include "lib/error.h"
+#include "lib/stdio.h"
 
 
 
@@ -25,6 +26,7 @@ u64 syscall(u64 id, u64 arg0, u64 arg1, u64 arg2) {
             sys_yield();
             break;
         default:
+            printk("[syscall] error id = %x\n", id);
             panic("kernel: syscall id undefined.");
             break;
     }

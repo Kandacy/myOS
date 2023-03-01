@@ -25,3 +25,7 @@ void panic(const char *s) {
     printk("[Panic] %s\n", s);
     sbi_shutdown(1);
 }
+
+
+
+void debug(){}

@@ -17,5 +17,7 @@
 void assert(u8 isTrue);
 void panic(const char *s);
 
+void debug();
+
 
 #endif /* __ERROR_H */

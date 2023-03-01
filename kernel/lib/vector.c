@@ -120,6 +120,7 @@ static void vector_grow(Vector* v) {
  *      v: 要搞的vec
  *      elemAddr: 要插入元素的指针
  *  @return: 
+ *  @note: 此处push是复制源地址的元素到vec中，无需担心临时变量生命周期问题
  */
 void vector_push(Vector* v, const void* elemAddr){
     if(v->logicalSize == v->allocatedSize)

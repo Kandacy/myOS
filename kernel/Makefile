@@ -23,6 +23,7 @@ SRC_FILES = ./start.s \
 			./mm/addr.c \
 			./mm/frame_allocator.c \
 			./mm/mem.c \
+			./mm/memory_set.c \
 			./mm/page_table.c \
 			./sbi/sbi.c \
 			./syscall/syscall.c \

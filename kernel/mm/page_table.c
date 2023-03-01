@@ -10,6 +10,7 @@
 #include "mm/mem.h"
 #include "lib/vector.h"
 #include "lib/stdlib.h"
+#include "lib/error.h"
 
 
 
@@ -44,10 +45,10 @@ PageTableEntry pte_new(PhysPageNum ppn, u64 flags) {
 
 
 /**
- *  @brief: PTE提取PA
+ *  @brief: PTE提取PPN
  *  @param:
  *      pte: 页表项
- *  @return: 页表项中的物理地址
+ *  @return: 页表项中的物理页号
  */
 PhysPageNum pte_get_ppn(PageTableEntry pte){
     return (PhysPageNum)(pte >> 10);
@@ -78,6 +79,7 @@ PageTableEntry *pt_find_pte_from_vpn(PageTable *pt, VirtPageNum vpn){
         
         if( (*target)== 0 ){ // 没有下一级，新建
             *target = pte_new(frame_allocator_alloc(), PTE_FLAG_BIT_V);
+            // printk("[mm/page_table.c] alloc frame ppn = 0x%x, vpn = 0x%lx, root = 0x%lx\n", (*target) >> 12, vpn, pt->root_ppn);
         }
         target = (PageTableEntry *)ppn_to_pa(pte_get_ppn(*target)) + vpn_index[i]; // 指向下一级
     }
@@ -101,7 +103,9 @@ PageTableEntry *pt_find_pte_from_vpn(PageTable *pt, VirtPageNum vpn){
 void pt_map_ppn_vpn(PageTable *pt, PhysPageNum ppn, VirtPageNum vpn, u64 ext_pte_flag){
     PageTableEntry *pte = pt_find_pte_from_vpn(pt, vpn); // 找到对应PTE
     *pte = pte_new(ppn, PTE_FLAG_BIT_V | ext_pte_flag); // 建立映射
-    // printk("[mm/page_table.c] vpn -> pte = 0x%x | 0x%x\n", *pte >> 10, *pte & 0xff);
+    // if(vpn > 0xfffffffffff){
+    //     printk("[mm/page_table.c] ppn = 0x%lx, pte = 0x%lx, vpn -> pte = 0x%lx | 0x%lx, vpn = 0x%lx\n", ppn, (u64)pte, *pte >> 10, *pte & 0xff, vpn);
+    // }
 }
 
 
@@ -117,4 +121,21 @@ void pt_map_ppn_vpn(PageTable *pt, PhysPageNum ppn, VirtPageNum vpn, u64 ext_pte
 void pt_unmap_ppn_vpn(PageTable *pt, VirtPageNum vpn){
     PageTableEntry *pte = pt_find_pte_from_vpn(pt, vpn); // 找到对应PTE
     *pte = pte_new(0, 0); // 拆除映射
+}
+
+
+
+
+/**
+ *  @brief: 从vpn解析pa
+ *  @param:
+ *      pt: 对应的页表管理项
+ *      vpn：虚拟页号
+ *  @return: vpn对应的pa
+ */
+PhysAddr pt_get_pa_from_vpn(PageTable *pt, VirtPageNum vpn){
+    PageTableEntry pte = pte_get_ppn(*pt_find_pte_from_vpn(pt, vpn));
+    PhysAddr pa = ppn_to_pa(pte);
+    // printk("pte = 0x%lx, pa = 0x%lx, root_ppn = 0x%lx\n", pte, pa, pt->root_ppn);debug();
+    return pa;
 }

@@ -14,6 +14,11 @@ SECTIONS
     text_start = .;
     .text : {
         *(.entry_function)
+        /* 这里是trap的跳板位置 */
+        . = ALIGN(4K);
+        strampoline = .;
+        *(.text.trampoline);
+        . = ALIGN(4K);
         *(.text .text.*)
     }
     text_end = .;
